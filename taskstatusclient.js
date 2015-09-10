@@ -36,7 +36,9 @@ TaskStatusClient.prototype._handleMessage = function(topic, message) {
 	}
 };
 TaskStatusClient.prototype.send = function(message) {
-	this.socket.send(Container.encode(message));
+	var encoded = Container.encode(message);
+	var sendBuffer = encoded.buffer.slice(0, encoded.limit);
+	this.socket.send(sendBuffer);
 };
 TaskStatusClient.prototype.sendPingAcknowledge = function() {
 	this.socket.send({
