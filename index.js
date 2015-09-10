@@ -1,8 +1,9 @@
 var MachineTalkBrowser = require('./machinetalkbrowser');
 var TaskStatusClient = require('./taskstatusclient');
+var TaskCommandClient = require('./taskcommandclient');
 
 var machinetalkbrowser = new MachineTalkBrowser();
-var taskstatusclient;
+var taskstatusclient, taskcommandclient;
 machinetalkbrowser.on('machineUp', function(machine) {
 	console.log('Machine',machine.uuid,'up');
 });
@@ -13,6 +14,8 @@ machinetalkbrowser.on('serviceUp', function(machine,service,dsn) {
 	console.log('Machine',machine.uuid,': Service',service,':',dsn);
 	if (service === 'status') {
 		initializeTaskStatusClient(dsn);
+	} else if (service === 'command') {
+		initializeTaskCommandClient(dsn);
 	}
 });
 machinetalkbrowser.on('serviceDown', function(machine,service,dsn) {
@@ -28,4 +31,13 @@ function initializeTaskStatusClient(dsn) {
 	});
 
 	taskstatusclient.connect();
+}
+
+function initializeTaskCommandClient(dsn) {
+	taskcommandclient = new TaskCommandClient(dsn);
+	taskcommandclient.connect();
+	console.log('Pinging...')
+	taskcommandclient.ping(function() {
+		console.log('Ping acknowledged');
+	});
 }
