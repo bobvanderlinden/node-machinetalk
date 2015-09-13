@@ -2,9 +2,9 @@ var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 var zmq = require('zmq');
 var _ = require('underscore');
-var machinetalkprotobuf = require('./machinetalkprotobuf');
-var Container = machinetalkprotobuf.Container;
-var ContainerType = machinetalkprotobuf.ContainerType;
+var protobufMessage = require('machinetalk-protobuf').message;
+var Container = protobufMessage.Container;
+var ContainerType = protobufMessage.ContainerType;
 
 function TaskCommandClient(address) {
 	this.address = address;

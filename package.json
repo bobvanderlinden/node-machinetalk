@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "machinetalk-protobuf": "^1.0.1",
     "mdns": "^2.2.9",
     "protobufjs": "^4.0.0",
     "underscore": "^1.8.3",
