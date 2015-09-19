@@ -21,7 +21,7 @@ MachineTalkBrowser.prototype._handleServiceUp = function(service) {
 	var txtRecord = service.txtRecord;
 	if (!txtRecord) { return; }
 	var uuid = txtRecord.uuid;
-	var service = txtRecord.service;
+	var serviceName = txtRecord.service;
 	var dsn = txtRecord.dsn;
 	if (!uuid || !service || !dsn) { return; }
 	var machine = this.machines[uuid];
@@ -32,21 +32,21 @@ MachineTalkBrowser.prototype._handleServiceUp = function(service) {
 		};
 		this.emit('machineUp', machine);
 	}
-	machine.services[service] = dsn;
-	this.emit('serviceUp', machine, service, dsn);
+	machine.services[serviceName] = dsn;
+	this.emit('serviceUp', machine, serviceName, dsn);
 };
 MachineTalkBrowser.prototype._handleServiceDown = function(service) {
 	var txtRecord = service.txtRecord;
 	if (!txtRecord) { return; }
 	var uuid = txtRecord.uuid;
-	var service = txtRecord.service;
+	var serviceName = txtRecord.service;
 	var dsn = txtRecord.dsn;
-	if (!uuid || !service || !dsn) { return; }
+	if (!uuid || !serviceName || !dsn) { return; }
 	var machine = this.machines[uuid];
 	if (!machine) { return; }
-	if (!machine.services[service]) { return; }
-	delete machine.services[service];
-	this.emit('serviceDown', machine, service, dsn);
+	if (!machine.services[serviceName]) { return; }
+	delete machine.services[serviceName];
+	this.emit('serviceDown', machine, serviceName, dsn);
 	if (_.isEmpty(machine.services)) {
 		delete this.machines[uuid];
 		this.emit('machineDown', machine);
