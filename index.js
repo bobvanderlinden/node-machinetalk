@@ -39,5 +39,13 @@ function initializeTaskCommandClient(dsn) {
 	console.log('Pinging...');
 	taskcommandclient.ping(function() {
 		console.log('Ping acknowledged');
+		setTimeout(function() {
+			taskcommandclient.emcTaskSetMode('execute', 1);
+			taskcommandclient.emcTaskSetState('execute', 1);
+			taskcommandclient.emcTaskSetState('execute', 2);
+			taskcommandclient.emcTaskSetState('execute', 4);
+			taskcommandclient.emcAxisUnhome(0);
+			taskcommandclient.emcAxisHome(0);
+		},1000);
 	});
 }
