@@ -36,7 +36,7 @@ function initializeTaskStatusClient(dsn) {
 function initializeTaskCommandClient(dsn) {
 	taskcommandclient = new TaskCommandClient(dsn);
 	taskcommandclient.connect();
-	console.log('Pinging...')
+	console.log('Pinging...');
 	taskcommandclient.ping(function() {
 		console.log('Ping acknowledged');
 	});
