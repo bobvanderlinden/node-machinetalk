@@ -2,8 +2,6 @@ language: node_js
 node_js:
   - "4.1.0"
   - "0.12"
-sudo: false
-addons:
-  apt:
-    packages:
-    - libzmq3-dev
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install libzmq3-dev libavahi-compat-libdnssd-dev
