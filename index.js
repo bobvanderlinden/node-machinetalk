@@ -1,5 +1,5 @@
 module.exports = {
   MachineTalkBrowser: require('./machinetalkbrowser'),
-  TaskStatusClient: require('./taskstatusclient'),
+  StatusClient: require('./statusclient'),
   TaskCommandClient: require('./taskcommandclient')
 };
