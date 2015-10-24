@@ -69,5 +69,36 @@ describe('StatusClient', function() {
       });
     });
 
+    it('emits statuschanged when incremental status is received', function(done) {
+      statusClient.once('statuschanged', function(status) {
+        statusClient.once('statuschanged', function(status) {
+          assert.equal(status.position.x, 5);
+          assert.equal(status.position.y, 2);
+          assert.equal(status.position.z, 3);
+
+          assert.equal(statusClient.status.position.x, 5);
+          assert.equal(statusClient.status.position.y, 2);
+          assert.equal(statusClient.status.position.z, 3);
+
+          done();
+        });
+      });
+      statusClient.connect();
+
+      publisher.publishFullStatus('motion', {
+        position: {
+          x: 1,
+          y: 2,
+          z: 3
+        }
+      });
+      publisher.publishIncrementalStatus('motion', {
+        position: {
+          x: 5,
+          y: null,
+          z: null
+        }
+      });
+    });
   });
 });

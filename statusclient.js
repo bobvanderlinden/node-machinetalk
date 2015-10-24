@@ -41,10 +41,10 @@ StatusClient.prototype._handleMessage = function(topic, message) {
   if (message.type === ContainerType.MT_PING) {
     this.sendPingAcknowledge();
   } else if (message.type === ContainerType.MT_EMCSTAT_FULL_UPDATE) {
-    this.status = extendStatus({}, this._getStatusFromMessage(message));
+    this.status = StatusClient.extendStatus({}, this._getStatusFromMessage(message));
     this.emit('statuschanged', this.status);
   } else if (message.type === ContainerType.MT_EMCSTAT_INCREMENTAL_UPDATE) {
-    extendStatus(this.status, this._getStatusFromMessage(message));
+    StatusClient.extendStatus(this.status, this._getStatusFromMessage(message));
     this.emit('statuschanged', this.status);
   } else {
     console.log('Unknown message type', message.type);
@@ -64,14 +64,34 @@ StatusClient.prototype.sendPingAcknowledge = function() {
   });
 };
 
-function extendStatus(destination, source) {
+StatusClient.extendStatus = function extendStatus(destination, source) {
   for (var key in source) {
-    if (source.hasOwnProperty(key) && source[key] !== null) {
+    if (!source.hasOwnProperty(key) || source[key] === null)
+      // Skip if source doesn't have a value.
+      continue;
+
+    if (destination[key] === null || destination[key] === undefined) {
+      // Overwrite if destination has no value.
       destination[key] = source[key];
+      continue;
     }
+
+    if (typeof source[key] !== 'object') {
+      // Overwrite if source has a primitive value.
+      destination[key] = source[key];
+      continue;
+    }
+
+    if (typeof destination[key] === 'object') {
+      // Recurse down for object values.
+      extendStatus(destination[key], source[key]);
+      continue;
+    }
+
+    throw new Error('Incorrect status');
   }
   return destination;
-}
+};
 
 StatusClient.prototype.close = function close() {
   this.socket.close();
