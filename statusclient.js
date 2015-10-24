@@ -6,10 +6,10 @@ var protobufMessage = require('machinetalk-protobuf').message;
 var Container = protobufMessage.Container;
 var ContainerType = protobufMessage.ContainerType;
 
-function StatusClient(address, topic) {
+function StatusClient(address) {
   this.address = address;
-  this.topic = topic;
   this.socket = zmq.socket('sub');
+  this.status = {};
   this.socket.on('message', this._handleMessage.bind(this));
 
   this.socket.on('connect', this.emit.bind(this, 'connect'));
@@ -28,30 +28,35 @@ util.inherits(StatusClient, EventEmitter);
 StatusClient.prototype.connect = function() {
   this.socket.monitor(1000, 0);
   this.socket.connect(this.address);
-  this.socket.subscribe(this.topic);
+};
+StatusClient.prototype.subscribe = function(topic) {
+  this.socket.subscribe(topic);
 };
 StatusClient.prototype._handleMessage = function(topic, message) {
   topic = topic && topic.toString();
-  if (topic !== this.topic) {
-    return;
-  }
+  var status = this.status[topic] || (this.status[topic] = {});
+
   message = Container.decode(message);
   this.emit('message', message);
 
   if (message.type === ContainerType.MT_PING) {
     // TODO: Handle ping (reset watchdog)
   } else if (message.type === ContainerType.MT_EMCSTAT_FULL_UPDATE) {
-    this.status = StatusClient.extendStatus({}, this._getStatusFromMessage(message));
+    StatusClient.extendStatus(status, this._getStatusFromMessage(topic, message));
+    this.emit(topic + 'statuschanged', status);
+    this.emit('topicstatuschanged', topic, status);
     this.emit('statuschanged', this.status);
   } else if (message.type === ContainerType.MT_EMCSTAT_INCREMENTAL_UPDATE) {
-    StatusClient.extendStatus(this.status, this._getStatusFromMessage(message));
+    StatusClient.extendStatus(status, this._getStatusFromMessage(topic, message));
+    this.emit(topic + 'statuschanged', status);
+    this.emit('topicstatuschanged', topic, status);
     this.emit('statuschanged', this.status);
   } else {
     console.log('Unknown message type', message.type);
   }
 };
-StatusClient.prototype._getStatusFromMessage = function(message) {
-  return message['emc_status_' + this.topic];
+StatusClient.prototype._getStatusFromMessage = function(topic, message) {
+  return message['emc_status_' + topic];
 };
 StatusClient.extendStatus = function extendStatus(destination, source) {
   for (var key in source) {

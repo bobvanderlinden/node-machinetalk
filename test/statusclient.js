@@ -39,7 +39,8 @@ describe('StatusClient', function() {
     var address = 'tcp://127.0.0.1:5000';
     beforeEach(function() {
       publisher = new StatusPublisher(address);
-      statusClient = new StatusClient(address, 'motion');
+      statusClient = new StatusClient(address);
+      statusClient.subscribe('motion');
     });
     afterEach(function() {
       statusClient.close();
@@ -47,14 +48,14 @@ describe('StatusClient', function() {
     });
 
     it('emits statuschanged when full status is received', function(done) {
-      statusClient.on('statuschanged', function(status) {
+      statusClient.on('motionstatuschanged', function(status) {
         assert.equal(status.position.x, 1);
         assert.equal(status.position.y, 2);
         assert.equal(status.position.z, 3);
 
-        assert.equal(statusClient.status.position.x, 1);
-        assert.equal(statusClient.status.position.y, 2);
-        assert.equal(statusClient.status.position.z, 3);
+        assert.equal(statusClient.status.motion.position.x, 1);
+        assert.equal(statusClient.status.motion.position.y, 2);
+        assert.equal(statusClient.status.motion.position.z, 3);
 
         done();
       });
@@ -70,15 +71,15 @@ describe('StatusClient', function() {
     });
 
     it('emits statuschanged when incremental status is received', function(done) {
-      statusClient.once('statuschanged', function(status) {
-        statusClient.once('statuschanged', function(status) {
+      statusClient.once('motionstatuschanged', function(status) {
+        statusClient.once('motionstatuschanged', function(status) {
           assert.equal(status.position.x, 5);
           assert.equal(status.position.y, 2);
           assert.equal(status.position.z, 3);
 
-          assert.equal(statusClient.status.position.x, 5);
-          assert.equal(statusClient.status.position.y, 2);
-          assert.equal(statusClient.status.position.z, 3);
+          assert.equal(statusClient.status.motion.position.x, 5);
+          assert.equal(statusClient.status.motion.position.y, 2);
+          assert.equal(statusClient.status.motion.position.z, 3);
 
           done();
         });
