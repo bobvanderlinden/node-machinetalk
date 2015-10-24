@@ -46,3 +46,7 @@ browser.on('serviceUp', function(machine, serviceName, dsn) {
 // Start discovering machines.
 browser.start();
 ```
+
+## Examples
+
+[See the Examples directory](https://github.com/bobvanderlinden/node-machinetalk/tree/master/examples)
