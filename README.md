@@ -7,12 +7,42 @@ This project is in a very early phase. Its goal is to provide an easy to use API
 
 ## Installation
 
-```
-npm install
+```sh
+npm install --save git+https://github.com/bobvanderlinden/node-machinekit
 ```
 
 ## Usage
 
-```
-node index.js
+```js
+var machinetalk = require('node-machinetalk');
+
+// Initiate a machine browser that discovers Machinetalk
+// machines on the network with their capabilities (services).
+var browser = new machinetalk.MachineTalkBrowser();
+
+// Wait for services to be discovered.
+browser.on('serviceUp', function(machine, serviceName, dsn) {
+  // We are only interested in the 'status' service.
+  if (serviceName !== 'status') { return; }
+
+  // Initiate a status client that can retrieve status updates.
+  var statusclient = new machinetalk.StatusClient(dsn);
+
+  // Wait for status updates for motion and print them.
+  statusclient.on('motionstatuschanged', function(status) {
+    console.log('Machine position: ',
+      status.position.x,
+      status.position.y,
+      status.position.z
+    );
+  });
+
+  // Connect to the status service.
+  // We are only interested in 'motion' updates.
+  statusclient.connect();
+  statusclient.subscribe('motion');
+});
+
+// Start discovering machines.
+browser.start();
 ```
