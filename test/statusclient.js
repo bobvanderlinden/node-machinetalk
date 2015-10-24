@@ -5,34 +5,65 @@ var Container = machinetalk.protobuf.message.Container;
 var ContainerType = machinetalk.protobuf.message.ContainerType;
 var StatusClient = machinetalk.StatusClient;
 
-describe('StatusClient', function() {
-  var socket;
-  var address = 'tcp://127.0.0.1:5000';
-  beforeEach(function() {
-    socket = zmq.socket('pub');
-    socket.bindSync(address);
-  });
-  afterEach(function() {
-    socket.close();
-  });
-  it('can retrieve motion status with position', function(cb) {
-    var statusClient = new StatusClient(address, 'motion');
-    statusClient.on('statuschanged', function(status) {
-      assert.equal(status.position.x, 1);
-      assert.equal(status.position.y, 2);
-      assert.equal(status.position.z, 3);
-      statusClient.close();
-      cb();
-    });
-    statusClient.connect();
+function StatusPublisher(address) {
+  this.socket = zmq.socket('pub');
+  this.socket.bindSync(address);
+}
+StatusPublisher.prototype.publishFullStatus = function(topic, status) {
+  var message = {
+    type: ContainerType.MT_EMCSTAT_FULL_UPDATE
+  };
+  message['emc_status_' + topic] = status;
+  this.send(topic, message);
+};
+StatusPublisher.prototype.publishIncrementalStatus = function(topic, status) {
+  var message = {
+    type: ContainerType.MT_EMCSTAT_INCREMENTAL_UPDATE
+  };
+  message['emc_status_' + topic] = status;
+  this.send(topic, message);
+};
+StatusPublisher.prototype.send = function(topic, message) {
+  var encoded = Container.encode(message);
+  var sendBuffer = encoded.buffer.slice(0, encoded.limit);
+  this.socket.send([topic, sendBuffer]);
+};
+StatusPublisher.prototype.close = function close() {
+  this.socket.close();
+};
 
-    var encoded = Container.encode({
-      type: ContainerType.MT_EMCSTAT_FULL_UPDATE,
-      emc_status_motion: {
-        position: { x: 1, y: 2, z: 3 }
-      }
+describe('StatusClient', function() {
+  describe('while connected', function() {
+    var publisher;
+    var statusClient;
+    var address = 'tcp://127.0.0.1:5000';
+    beforeEach(function() {
+      publisher = new StatusPublisher(address);
+      statusClient = new StatusClient(address, 'motion');
     });
-    var sendBuffer = encoded.buffer.slice(0, encoded.limit);
-    socket.send(['motion', sendBuffer]);
+    afterEach(function() {
+      statusClient.close();
+      publisher.close();
+    });
+
+    it('emits statuschanged when full status is received', function(done) {
+      statusClient.on('statuschanged', function(status) {
+        assert.equal(status.position.x, 1);
+        assert.equal(status.position.y, 2);
+        assert.equal(status.position.z, 3);
+
+        done();
+      });
+      statusClient.connect();
+
+      publisher.publishFullStatus('motion', {
+        position: {
+          x: 1,
+          y: 2,
+          z: 3
+        }
+      });
+    });
+
   });
 });
