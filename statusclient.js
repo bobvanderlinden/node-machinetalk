@@ -11,9 +11,22 @@ function StatusClient(address, topic) {
   this.topic = topic;
   this.socket = zmq.socket('sub');
   this.socket.on('message', this._handleMessage.bind(this));
+
+  this.socket.on('connect', this.emit.bind(this, 'connect'));
+  this.socket.on('connect_delay', this.emit.bind(this, 'connect_delay'));
+  this.socket.on('connect_retry', this.emit.bind(this, 'connect_retry'));
+  this.socket.on('listen', this.emit.bind(this, 'listen'));
+  this.socket.on('bind_error', this.emit.bind(this, 'bind_error'));
+  this.socket.on('accept', this.emit.bind(this, 'accept'));
+  this.socket.on('accept_error', this.emit.bind(this, 'accept_error'));
+  this.socket.on('close', this.emit.bind(this, 'close'));
+  this.socket.on('close_error', this.emit.bind(this, 'close_error'));
+  this.socket.on('disconnect', this.emit.bind(this, 'disconnect'));
+  this.socket.on('monitor_error', this.emit.bind(this, 'monitor_error'));
 }
 util.inherits(StatusClient, EventEmitter);
 StatusClient.prototype.connect = function() {
+  this.socket.monitor(1000, 0);
   this.socket.connect(this.address);
   this.socket.subscribe(this.topic);
 };
