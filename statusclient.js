@@ -59,7 +59,7 @@ StatusClient.prototype.send = function(message) {
   this.socket.send(sendBuffer);
 };
 StatusClient.prototype.sendPingAcknowledge = function() {
-  this.socket.send({
+  this.send({
     type: ContainerType.MT_PING_ACKNOWLEDGE
   });
 };
