@@ -39,7 +39,7 @@ StatusClient.prototype._handleMessage = function(topic, message) {
   this.emit('message', message);
 
   if (message.type === ContainerType.MT_PING) {
-    this.sendPingAcknowledge();
+    // TODO: Handle ping (reset watchdog)
   } else if (message.type === ContainerType.MT_EMCSTAT_FULL_UPDATE) {
     this.status = StatusClient.extendStatus({}, this._getStatusFromMessage(message));
     this.emit('statuschanged', this.status);
@@ -53,17 +53,6 @@ StatusClient.prototype._handleMessage = function(topic, message) {
 StatusClient.prototype._getStatusFromMessage = function(message) {
   return message['emc_status_' + this.topic];
 };
-StatusClient.prototype.send = function(message) {
-  var encoded = Container.encode(message);
-  var sendBuffer = encoded.buffer.slice(0, encoded.limit);
-  this.socket.send(sendBuffer);
-};
-StatusClient.prototype.sendPingAcknowledge = function() {
-  this.send({
-    type: ContainerType.MT_PING_ACKNOWLEDGE
-  });
-};
-
 StatusClient.extendStatus = function extendStatus(destination, source) {
   for (var key in source) {
     if (!source.hasOwnProperty(key) || source[key] === null)
