@@ -73,4 +73,8 @@ function extendStatus(destination, source) {
   return destination;
 }
 
+StatusClient.prototype.close = function close() {
+  this.socket.close();
+};
+
 module.exports = StatusClient;

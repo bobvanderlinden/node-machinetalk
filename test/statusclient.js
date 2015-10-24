@@ -21,6 +21,7 @@ describe('StatusClient', function() {
       assert.equal(status.position.x, 1);
       assert.equal(status.position.y, 2);
       assert.equal(status.position.z, 3);
+      statusClient.close();
       cb();
     });
     statusClient.connect();
