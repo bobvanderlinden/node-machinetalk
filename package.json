@@ -6,8 +6,9 @@
   "scripts": {
     "test": "mocha"
   },
-  "author": "",
+  "author": "Bob van der Linden <bobvanderlinden@gmail.com>",
   "license": "LGPL-3.0",
+  "repository": "bobvanderlinden/node-machinetalk",
   "dependencies": {
     "machinetalk-protobuf": "^1.0.1",
     "mdns": "^2.2.10",
