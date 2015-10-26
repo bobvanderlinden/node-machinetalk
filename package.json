@@ -7,7 +7,7 @@
     "test": "mocha"
   },
   "author": "",
-  "license": "ISC",
+  "license": "LGPL-3.0",
   "dependencies": {
     "machinetalk-protobuf": "^1.0.1",
     "mdns": "^2.2.10",
