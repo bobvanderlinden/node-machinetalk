@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "test:watch": "mocha -w"
   },
   "author": "Bob van der Linden <bobvanderlinden@gmail.com>",
   "license": "LGPL-3.0",
