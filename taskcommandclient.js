@@ -17,8 +17,10 @@ function TaskCommandClient(address) {
 util.inherits(TaskCommandClient, EventEmitter);
 TaskCommandClient.DEFAULT_TIMEOUT = 1000;
 TaskCommandClient.prototype.connect = function() {
-  console.log('address', this.address);
   this.socket.connect(this.address);
+};
+TaskCommandClient.prototype.close = function() {
+  this.socket.close();
 };
 
 // Axis
