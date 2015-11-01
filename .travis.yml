@@ -1,6 +1,13 @@
 language: node_js
 node_js:
-  - "0.12"
+- '0.12'
 before_install:
-  - sudo apt-get update
-  - sudo apt-get install libzmq3-dev libavahi-compat-libdnssd-dev
+- sudo apt-get update
+- sudo apt-get install libzmq3-dev libavahi-compat-libdnssd-dev
+deploy:
+  provider: npm
+  email: "bobvanderlinden@gmail.com"
+  api_key:
+    secure: KbNJ3LUZX+0gxANsjjptLAtiafGH+zqS5qkJfEFLZDwdRpY6ufi/UFwliW0brUD8FajX7ty1cnXYcfjBomOTweEb62DWCB7KJPUBG3EHLxfWppmctVc7XbXeWjIYQlef/mU/HKb0V5txUPxXzWrh7RejFRWz15xt6yOeup2Q6m/WU+tKsTPdEMrU5olAZiN3HZf+0UyI4hvy2ggFz7wzvSeJCc2qPXgmVo+msS+5eBvqDvAUqED+jOnVfgdF4VH2qZoTdGobWi8z+fYZ9l0/jWESrvEz8rV8xnQzy1OKWy5mIqPi5gbg73hetLusRWEOklBnCCL+ggq6twsej3F9P37N8JsMHXL4m/x5Xx0Lc/2pd1xWcNKifRk0Oq+62iE4zzeMqLg2cVAQSMDgdUuNPWLDIM/iPlWUR1n/HuQeNw4ZL9KrtOIwFIvgUbQtPeOVsA9SMWq0M27tV5K4eUFSooXQ5j7Pr1A4mWNG4YizgC2UOfFYPgFDXVtQr2rlDzXEssaHpVTNUzm5d0ljhSUpyGljIrAPAPee1ZdNlhu2T+UAFXhxNhRVQBOAwpLLkn/OcgL8ebMiIECxEys+f9LW1pVjomTOGLuaS4HLRcYq19IZWIXfpJKCTeyDHr/ATVm4jtL0wLFkFYNcS6RzpKZ3boS99HSf3GsSnzh/8jnIZu8=
+  on:
+    tags: true
