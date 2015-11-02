@@ -21,12 +21,12 @@ var machinetalk = require('node-machinetalk');
 var browser = new machinetalk.MachineTalkBrowser();
 
 // Wait for services to be discovered.
-browser.on('serviceUp', function(machine, serviceName, dsn) {
+browser.on('serviceUp', function(service) {
   // We are only interested in the 'status' service.
-  if (serviceName !== 'status') { return; }
+  if (service.name !== 'status') { return; }
 
   // Initiate a status client that can retrieve status updates.
-  var statusclient = new machinetalk.StatusClient(dsn);
+  var statusclient = new machinetalk.StatusClient(service.dsn);
 
   // Wait for status updates for motion and print them.
   statusclient.on('motionstatuschanged', function(status) {

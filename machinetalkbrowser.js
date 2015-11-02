@@ -33,12 +33,18 @@ MachineTalkBrowser.prototype._handleServiceUp = function(service) {
   if (!machine) {
     machine = this.machines[uuid] = {
       uuid: uuid,
+      host: service.host,
       services: {}
     };
     this.emit('machineUp', machine);
   }
   machine.services[serviceName] = dsn;
-  this.emit('serviceUp', machine, serviceName, dsn);
+  this.emit('serviceUp', {
+    machine: machine,
+    name: serviceName,
+    mdns: service,
+    dsn: dsn
+  });
 };
 MachineTalkBrowser.prototype._handleServiceDown = function(service) {
   var txtRecord = service.txtRecord;
@@ -59,7 +65,12 @@ MachineTalkBrowser.prototype._handleServiceDown = function(service) {
     return;
   }
   delete machine.services[serviceName];
-  this.emit('serviceDown', machine, serviceName, dsn);
+  this.emit('serviceDown', {
+    machine: machine,
+    name: serviceName,
+    mdns: service,
+    dsn: dsn
+  });
   if (_.isEmpty(machine.services)) {
     delete this.machines[uuid];
     this.emit('machineDown', machine);

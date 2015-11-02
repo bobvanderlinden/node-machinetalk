@@ -7,11 +7,11 @@ machinetalkbrowser.on('machineUp', function(machine) {
 machinetalkbrowser.on('machineDown', function(machine) {
   console.log('Machine', machine.uuid, 'down');
 });
-machinetalkbrowser.on('serviceUp', function(machine, service, dsn) {
-  console.log('Machine', machine.uuid, ': Service', service, ':', dsn);
+machinetalkbrowser.on('serviceUp', function(service) {
+  console.log('Machine', service.machine.uuid, ': Service', service.name, ':', service.dsn);
 });
-machinetalkbrowser.on('serviceDown', function(machine, service, dsn) {
-  console.log('Machine', machind.uuid, ': Service', service, 'down');
+machinetalkbrowser.on('serviceDown', function(service) {
+  console.log('Machine', service.machine.uuid, ': Service', service.name, 'down');
 });
 
 machinetalkbrowser.start();
