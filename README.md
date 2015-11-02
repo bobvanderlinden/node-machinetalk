@@ -8,13 +8,13 @@ This project is in a very early phase. Its goal is to provide an easy to use API
 ## Installation
 
 ```sh
-npm install --save git+https://github.com/bobvanderlinden/node-machinekit
+npm install --save machinetalk
 ```
 
 ## Usage
 
 ```js
-var machinetalk = require('node-machinetalk');
+var machinetalk = require('machinetalk');
 
 // Initiate a machine browser that discovers Machinetalk
 // machines on the network with their capabilities (services).
