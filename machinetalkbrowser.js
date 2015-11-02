@@ -10,6 +10,7 @@ function MachineTalkBrowser() {
   this.browser = mdns.createBrowser(machinekitTcp);
   this.browser.on('serviceUp', this._handleServiceUp.bind(this));
   this.browser.on('serviceDown', this._handleServiceDown.bind(this));
+  this.browser.on('error', this.emit.bind(this, 'error'));
 }
 util.inherits(MachineTalkBrowser, EventEmitter);
 MachineTalkBrowser.prototype.start = function() {
