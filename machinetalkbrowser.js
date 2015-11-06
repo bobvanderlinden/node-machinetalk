@@ -1,54 +1,39 @@
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
-var mdns = require('mdns');
+var mdns = require('mdns-js');
 var _ = require('underscore');
 
-var machinekitTcp = mdns.makeServiceType('machinekit', 'tcp');
+var machinekitTcp = mdns.tcp('machinekit');
 
 function MachineTalkBrowser() {
   this.machines = {};
-  this.browser = mdns.createBrowser(machinekitTcp);
-  this.browser.on('serviceUp', this._handleServiceUp.bind(this));
-  this.browser.on('serviceDown', this._handleServiceDown.bind(this));
-  this.browser.on('error', this.emit.bind(this, 'error'));
 }
 util.inherits(MachineTalkBrowser, EventEmitter);
 MachineTalkBrowser.prototype.start = function() {
-  this.browser.start();
+  if (this.browser) { return; }
+  this.browser = mdns.createBrowser(machinekitTcp);
+  this.browser.on('ready', this._handleReady.bind(this));
+  this.browser.on('update', this._handleUpdate.bind(this));
+  this.browser.on('error', this.emit.bind(this, 'error'));
 };
 MachineTalkBrowser.prototype.stop = function() {
+  if (!this.browser) { return; }
   this.browser.stop();
 };
-MachineTalkBrowser.prototype._handleServiceUp = function(service) {
-  var txtRecord = service.txtRecord;
-  if (!txtRecord) {
-    return;
-  }
-  var uuid = txtRecord.uuid;
-  var serviceName = txtRecord.service;
-  var dsn = txtRecord.dsn;
-  if (!uuid || !service || !dsn) {
-    return;
-  }
-  var machine = this.machines[uuid];
-  if (!machine) {
-    machine = this.machines[uuid] = {
-      uuid: uuid,
-      host: service.host,
-      services: {}
-    };
-    this.emit('machineUp', machine);
-  }
-  machine.services[serviceName] = dsn;
-  this.emit('serviceUp', {
-    machine: machine,
-    name: serviceName,
-    mdns: service,
-    dsn: dsn
-  });
+MachineTalkBrowser.prototype._handleReady = function() {
+  this.browser.discover();
 };
-MachineTalkBrowser.prototype._handleServiceDown = function(service) {
-  var txtRecord = service.txtRecord;
+MachineTalkBrowser.prototype._handleUpdate = function(service) {
+  if (!service.txt) {
+    return;
+  }
+  var txtRecord = service.txt.map(function(line) {
+    return line.split('=', 2);
+  }).reduce(function(record, line) {
+    record[line[0]] = line[1];
+    return record;
+  }, {});
+
   if (!txtRecord) {
     return;
   }
@@ -60,21 +45,21 @@ MachineTalkBrowser.prototype._handleServiceDown = function(service) {
   }
   var machine = this.machines[uuid];
   if (!machine) {
-    return;
+    machine = this.machines[uuid] = {
+      uuid: uuid,
+      host: service.host,
+      services: {}
+    };
+    this.emit('machineUp', machine);
   }
-  if (!machine.services[serviceName]) {
-    return;
-  }
-  delete machine.services[serviceName];
-  this.emit('serviceDown', {
-    machine: machine,
-    name: serviceName,
-    mdns: service,
-    dsn: dsn
-  });
-  if (_.isEmpty(machine.services)) {
-    delete this.machines[uuid];
-    this.emit('machineDown', machine);
+  if (machine.services[serviceName] !== dsn) {
+    machine.services[serviceName] = dsn;
+    this.emit('serviceUp', {
+      machine: machine,
+      name: serviceName,
+      mdns: service,
+      dsn: dsn
+    });
   }
 };
 

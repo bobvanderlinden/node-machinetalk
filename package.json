@@ -13,6 +13,7 @@
   "dependencies": {
     "machinetalk-protobuf": "^1.0.1",
     "mdns": "^2.2.10",
+    "mdns-js": "^0.4.0",
     "protobufjs": "^4.0.0",
     "underscore": "^1.8.3",
     "zmq": "^2.13.0"
