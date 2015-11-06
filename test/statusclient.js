@@ -6,6 +6,7 @@ var ContainerType = machinetalk.protobuf.message.ContainerType;
 var StatusClient = machinetalk.StatusClient;
 
 function StatusPublisher(address) {
+  this.address = address;
   this.socket = zmq.socket('pub');
   this.socket.bindSync(address);
 }
@@ -29,6 +30,7 @@ StatusPublisher.prototype.send = function(topic, message) {
   this.socket.send([topic, sendBuffer]);
 };
 StatusPublisher.prototype.close = function close() {
+  this.socket.unbindSync(this.address);
   this.socket.close();
 };
 
@@ -42,9 +44,10 @@ describe('StatusClient', function() {
       statusClient = new StatusClient(address);
       statusClient.subscribe('motion');
     });
-    afterEach(function() {
+    afterEach(function(done) {
       statusClient.close();
       publisher.close();
+      setTimeout(done,100);
     });
 
     it('emits statuschanged when full status is received', function(done) {
