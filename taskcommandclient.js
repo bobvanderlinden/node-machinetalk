@@ -153,6 +153,10 @@ TaskCommandClient.prototype.emcTaskPlanRun = function(interp_name, line_number) 
     line_number: line_number
   });
 };
+TaskCommandClient.prototype.emcTaskPlanStep = function(interp_name) {
+  this.sendEmcInterp(ContainerType.MT_EMC_TASK_PLAN_STEP, interp_name, {
+  });
+};
 TaskCommandClient.prototype.emcTaskPlanSetBlockDelete = function(enable) {
   this.sendEmc(ContainerType.MT_EMC_TASK_PLAN_SET_BLOCK_DELETE, {
     enable: enable
