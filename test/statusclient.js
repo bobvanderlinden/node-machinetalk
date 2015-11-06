@@ -101,5 +101,24 @@ describe('StatusClient', function() {
         }
       });
     });
+
+    it('emits statuschanged when incremental status is received with array value', function(done) {
+      statusClient.once('motionstatuschanged', function(status) {
+        statusClient.once('motionstatuschanged', function(status) {
+          assert.equal(status.axis[0].homed, false);
+          assert.equal(status.axis[1].homed, true);
+
+          done();
+        });
+      });
+      statusClient.connect();
+
+      publisher.publishFullStatus('motion', {
+        axis: [ { index: 0, homed: false }, { index: 1, homed: false }]
+      });
+      publisher.publishIncrementalStatus('motion', {
+        axis: [ { index: 1, homed: true } ]
+      });
+    });
   });
 });
