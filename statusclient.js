@@ -97,7 +97,7 @@ StatusClient.extendArray = function extendArray(destination, source) {
     if (item.index >= array.length) {
       array.length = item.index + 1;
     }
-    array[item.index] = item;
+    array[item.index] = StatusClient.extendStatus(array[item.index] || {}, item);
     return array;
   }, destination || []);
 };

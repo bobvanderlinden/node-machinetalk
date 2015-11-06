@@ -105,7 +105,7 @@ describe('StatusClient', function() {
       });
     });
 
-    it('emits statuschanged when incremental status is received with array value', function(done) {
+    it('incremental update of array updates based on index property', function(done) {
       statusClient.once('motionstatuschanged', function(status) {
         statusClient.once('motionstatuschanged', function(status) {
           assert.equal(status.axis[0].homed, false);
@@ -121,6 +121,25 @@ describe('StatusClient', function() {
       });
       publisher.publishIncrementalStatus('motion', {
         axis: [ { index: 1, homed: true } ]
+      });
+    });
+
+    it('incremental update with null in array does not update original value', function(done) {
+      statusClient.once('motionstatuschanged', function(status) {
+        statusClient.once('motionstatuschanged', function(status) {
+          assert.equal(status.axis[0].homed, false);
+          assert.equal(status.axis[1].homed, false);
+
+          done();
+        });
+      });
+      statusClient.connect();
+
+      publisher.publishFullStatus('motion', {
+        axis: [ { index: 0, homed: false }, { index: 1, homed: false }]
+      });
+      publisher.publishIncrementalStatus('motion', {
+        axis: [ {index: 1, homed: null } ]
       });
     });
   });
