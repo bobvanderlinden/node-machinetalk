@@ -64,6 +64,11 @@ StatusClient.extendStatus = function extendStatus(destination, source) {
       // Skip if source doesn't have a value.
       continue;
 
+    if (source[key] instanceof Array) {
+      destination[key] = StatusClient.extendArray(destination[key], source[key]);
+      continue;
+    }
+
     if (destination[key] === null || destination[key] === undefined) {
       // Overwrite if destination has no value.
       destination[key] = source[key];
@@ -85,6 +90,16 @@ StatusClient.extendStatus = function extendStatus(destination, source) {
     throw new Error('Incorrect status');
   }
   return destination;
+};
+
+StatusClient.extendArray = function extendArray(destination, source) {
+  return source.reduce(function(array, item) {
+    if (item.index >= array.length) {
+      array.length = item.index + 1;
+    }
+    array[item.index] = StatusClient.extendStatus(array[item.index] || {}, item);
+    return array;
+  }, destination || []);
 };
 
 StatusClient.prototype.close = function close() {

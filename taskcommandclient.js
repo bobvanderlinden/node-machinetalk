@@ -125,7 +125,7 @@ TaskCommandClient.prototype.emcSplindleBrakeRelease = function() {
 
 // Task
 TaskCommandClient.prototype.emcTaskAbort = function(interp_name) {
-  this.sendEmc(ContainerType.MT_EMC_TASK_ABORT, interp_name);
+  this.sendEmcInterp(ContainerType.MT_EMC_TASK_ABORT, interp_name);
 };
 TaskCommandClient.prototype.emcTaskPlanExecute = function(interp_name, command) {
   this.sendEmcInterp(ContainerType.MT_EMC_TASK_PLAN_EXECUTE, interp_name, {
@@ -133,7 +133,7 @@ TaskCommandClient.prototype.emcTaskPlanExecute = function(interp_name, command) 
   });
 };
 TaskCommandClient.prototype.emcTaskPlanInit = function(interp_name) {
-  this.sendEmc(ContainerType.MT_EMC_TASK_PLAN_INIT, interp_name);
+  this.sendEmcInterp(ContainerType.MT_EMC_TASK_PLAN_INIT, interp_name);
 };
 TaskCommandClient.prototype.emcTaskPlanOpen = function(interp_name, path) {
   this.sendEmcInterp(ContainerType.MT_EMC_TASK_PLAN_OPEN, interp_name, {
@@ -141,14 +141,20 @@ TaskCommandClient.prototype.emcTaskPlanOpen = function(interp_name, path) {
   });
 };
 TaskCommandClient.prototype.emcTaskPlanPause = function(interp_name) {
-  this.sendEmc(ContainerType.MT_EMC_TASK_PLAN_PAUSE, interp_name);
+  this.sendEmcInterp(ContainerType.MT_EMC_TASK_PLAN_PAUSE, interp_name, {
+  });
 };
 TaskCommandClient.prototype.emcTaskPlanResume = function(interp_name) {
-  this.sendEmc(ContainerType.MT_EMC_TASK_PLAN_RESUME, interp_name);
+  this.sendEmcInterp(ContainerType.MT_EMC_TASK_PLAN_RESUME, interp_name, {
+  });
 };
 TaskCommandClient.prototype.emcTaskPlanRun = function(interp_name, line_number) {
   this.sendEmcInterp(ContainerType.MT_EMC_TASK_PLAN_RUN, interp_name, {
     line_number: line_number
+  });
+};
+TaskCommandClient.prototype.emcTaskPlanStep = function(interp_name) {
+  this.sendEmcInterp(ContainerType.MT_EMC_TASK_PLAN_STEP, interp_name, {
   });
 };
 TaskCommandClient.prototype.emcTaskPlanSetBlockDelete = function(enable) {
