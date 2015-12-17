@@ -12,7 +12,7 @@
   "repository": "bobvanderlinden/node-machinetalk",
   "dependencies": {
     "machinetalk-protobuf": "^1.0.1",
-    "mdns": "^2.2.10",
+    "mdns": "https://github.com/bobvanderlinden/node_mdns.git#fix-addressfamily",
     "protobufjs": "^4.0.0",
     "underscore": "^1.8.3",
     "zmq": "^2.13.0"
